@@ -1,0 +1,39 @@
+{
+  "canisters": {
+    "backend": {
+      "main": "Backend/RentSpace_backend/main.mo",
+      "type": "motoko"
+    },
+    "internet_identity" : {
+      "type": "pull",
+      "id": "rdmx6-jaaaa-aaaaa-aaadq-cai"
+    },
+    "User": {
+      "main": "Backend/RentSpace_backend/UserCanister.mo",
+      "type": "motoko"
+    },
+    "hotel": {
+      "main": "Backend/RentSpace_backend/HotelCanister.mo",
+      "type": "motoko"
+    },
+    "LoginWeb": {
+      "dependencies": [],
+      "frontend": {
+        "entrypoint": "LoginWeb/src/index.html"
+      },
+      "source": [
+        "LoginWeb/assets",
+        "dist/LoginWeb/"
+      ],
+      "type": "assets"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": "mops sources"
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

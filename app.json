@@ -1,0 +1,12 @@
+{
+  "name": "RentSpace",
+  "version": "1.0.0",
+  "slug": "rentspace",
+  "icon": "src/assets/logos/rentspace-logo.png",
+  "splash": {
+    "image": "src/assets/logos/rentspace-logo.png",
+    "resizeMode": "contain",
+    "backgroundColor": "rgba(58, 18, 82, 0.36)"
+  },
+  "description": "Discover and book hotels with RentSpace. Your perfect stay is just a click away!"
+}

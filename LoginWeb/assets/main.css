@@ -1,0 +1,86 @@
+/* Reset some default styles */
+body,
+h1,
+h2,
+p,
+button {
+  margin: 0;
+  padding: 0;
+}
+
+/* Apply a background color and some basic styling to the body */
+body {
+  background: #11002c;
+  font-family: Arial, sans-serif;
+}
+
+#bottomCircle {
+  border-radius: 370px;
+  opacity: 0.6;
+  background: radial-gradient(
+    107.52% 107.52% at 50% 50%,
+    #8d3494 0%,
+    #4b0fac 100%
+  );
+  filter: blur(42.5px);
+  width: 370px;
+  height: 370px;
+  flex-shrink: 0;
+  position: absolute;
+  bottom: -32%;
+  left: -42%;
+}
+#upperCircle {
+  width: 370px;
+  height: 370px;
+  flex-shrink: 0;
+  border-radius: 370px;
+  opacity: 0.6;
+  background: radial-gradient(
+    107.52% 107.52% at 50% 50%,
+    #8d3494 0%,
+    #4b0fac 100%
+  );
+  filter: blur(42.5px);
+  position: absolute;
+  top: -32%;
+  right: -42%;
+}
+
+/* Center the main content */
+main {
+  text-align: center;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+button {
+  background: radial-gradient(
+    107.52% 107.52% at 50% 50%,
+    #8d3494 0%,
+    #4b0fac 100%
+  );
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+/* Add spacing between buttons */
+form + form {
+  margin-top: 10px;
+}
+
+/* Style the logo */
+#logo {
+  max-width: 60%;
+  height: auto;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
