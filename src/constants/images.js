@@ -13,6 +13,8 @@ import commLogo from '../assets/images/communityCommit.png'
 import hotel from '../assets/images/hotelDemo.jpg'
 import profileSample from '../assets/images/profileSample.jpg'
 import profile2 from '../assets/images/profile2.png'
+import sampleMapIcon from '../assets/images/sampleMapIcon.jpg'
+import map1 from '../assets/images/map1.png'
 
 export default {
     favourite,
@@ -29,5 +31,7 @@ export default {
     commLogo,
     hotel,
     profileSample,
-    profile2
+    profile2,
+    sampleMapIcon,
+    map1
 }

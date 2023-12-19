@@ -2,7 +2,7 @@ import {View, Text, StyleSheet, TouchableOpacity, Image,Modal} from 'react-nativ
 import React, {useEffect, useRef,useState} from 'react';
 import {COLORS, SIZES} from '../constants/themes';
 import {images} from '../constants';
-import BottomNav from '../components/BottomNav';
+import BottomNav from '../components/Navigation/BottomNav';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
 

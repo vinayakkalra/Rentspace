@@ -1,6 +1,6 @@
 import {backend, createActor} from '../../src/declarations/backend/index';
 import {AuthClient} from '@dfinity/auth-client';
-import {HttpAgent} from '@dfinity/agent';
+import {HttpAgent,fromHex} from '@dfinity/agent';
 import {
   DelegationIdentity,
   Ed25519PublicKey,
@@ -10,7 +10,7 @@ import {
 
 let actor = backend;
 var url = new URL(window.location.href);
-
+let authClient
 // Get the search parameters from the URL
 var params = new URLSearchParams(url.search);
 
@@ -21,11 +21,11 @@ loginButton.onclick = async e => {
 //   var middleKeyIdentity = await ECDSAKeyIdentity.generate({extractable: true});
   let publicKey = params.get('publicKey');
   let newIdentity = new ECDSAKeyIdentity(
-    {publicKey: publicKey},
-    publicKey,
+    {publicKey: fromHex(publicKey)},
+    fromHex(publicKey),
     null,
   );
-  let authClient = await AuthClient.create({identity: newIdentity});
+  authClient = await AuthClient.create({identity: newIdentity});
   await new Promise(resolve => {
     authClient.login({
       identityProvider: process.env.DFX_NETWORK === "ic"
@@ -41,25 +41,20 @@ loginButton.onclick = async e => {
 
   const encodedDelegation = encodeURIComponent(delegationString);
 
-//   const chain = DelegationChain.fromJSON(
-//     JSON.parse(decodeURIComponent(encodedDelegation)),
-//   );
-//   const middleIdentity = DelegationIdentity.fromDelegation(
-//     middleKeyIdentity,
-//     chain,
-//   );
-
-//   const agent = new HttpAgent({identity: middleIdentity});
-
-//   actor = createActor('bkyz2-fmaaa-aaaaa-qaaaq-cai', {
-//     agent,
-//   });
-//   console.log('actor', actor);
-//   let whoami = await actor.whoami();
-//   console.log(whoami);
-
   var url = `rentspace://auth?delegation=${encodedDelegation}`;
   window.open(url, '_self');
 
   return false;
 };
+const redirectBtn=document.getElementById('open')
+redirectBtn.onclick=()=>{
+  const identity = authClient.getIdentity();
+
+  var delegationString = JSON.stringify(identity.getDelegation().toJSON());
+
+  const encodedDelegation = encodeURIComponent(delegationString);
+
+  var url = `rentspace://auth?delegation=${encodedDelegation}`;
+  window.open(url, '_self');
+  return false
+}

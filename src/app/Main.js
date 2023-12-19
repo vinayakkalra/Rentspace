@@ -1,44 +1,44 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  Modal,
-  Linking,
-  Platform,
-} from 'react-native';
-import React, {useEffect, useRef, useState} from 'react';
+import {View, Text, StyleSheet, TouchableOpacity, Image,Modal,Linking, Platform, Alert} from 'react-native';
+import React, {useEffect, useRef,useState} from 'react';
 import {COLORS, SIZES} from '../constants/themes';
-import {images} from '../constants';
-import BottomNav from '../components/BottomNav';
+import BottomNav from '../components/Navigation/BottomNav';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import BottomSheetLogin from '../components/BottomSheetLogin';
+import BottomSheetLogin from '../components/BottomSheets/BottomSheetLogin';
 import {BottomSheetModal, BottomSheetModalProvider} from '@gorhom/bottom-sheet';
-import BottomSheetFinishSignUp from '../components/BottomSheetFinishSignUp';
+import BottomSheetFinishSignUp from '../components/BottomSheets/BottomSheetFinishSignUp';
 import {InAppBrowser} from 'react-native-inappbrowser-reborn';
-import BottomSheetCommunity from '../components/BottomSheetCommunity';
-import BottomSheetNotification from '../components/BottomSheetNotification';
+import BottomSheetCommunity from '../components/BottomSheets/BottomSheetCommunity';
+import BottomSheetNotification from '../components/BottomSheets/BottomSheetNotification';
 import SplashScreen from 'react-native-splash-screen';
-import BottomSheetDetails from '../components/BottomSheetDetails';
-import ModalSafety from '../components/ModalSafety';
-import ModalCancellation from '../components/ModalCancellation';
-import ModalHouseRules from '../components/ModalHouseRules';
-import SearchBar from '../components/SearchBar';
-import HeaderSearch from '../components/HeaderSearch';
-import MapScreen from '../components/MapScreen';
-import UserDetailDemo from '../components/UserDetailDemo';
-import BookHotelPage from '../components/BookHotelPage';
-import UpdateProfile from '../components/UpdateProfile';
-import HotelCreationForm from '../components/HotelCreationForm';
-import HotelDetailPage from '../components/HotelDetailPage';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import BottomSheetDetails from '../components/BottomSheets/BottomSheetDetails';
+import ModalSafety from '../components/Modals/hotelDetailSubSections/ModalSafety';
+import ModalCancellation from '../components/Modals/hotelDetailSubSections/ModalCancellation';
+import ModalHouseRules from '../components/Modals/hotelDetailSubSections/ModalHouseRules';
+import HeaderSearch from '../components/Header/HeaderSearch';
+import UserDetailDemo from '../components/Modals/UserDetailDemo';
+import BookHotelPage from '../components/NavScreens/BookHotelPage';
+import UpdateProfile from '../components/Modals/UpdateProfile';
+import HotelCreationForm from '../components/Modals/HotelCreationForm';
+import HotelDetailPage from '../components/Modals/hotelDetailSubSections/HotelDetailPage';
 import {DelegationIdentity, Ed25519PublicKey, ECDSAKeyIdentity, DelegationChain} from "@dfinity/identity";
-import {HttpAgent} from "@dfinity/agent";
+import {HttpAgent, toHex} from "@dfinity/agent";
 import { createActor,backend } from '../declarations/backend';
+import { useDispatch,useSelector } from 'react-redux';
+import { setUser } from '../redux/users/actions';
+import { setPrinciple } from '../redux/principle/actions';
+import { setActor} from '../redux/actor/actions'
+import AsyncStorage from '@react-native-async-storage/async-storage';
+const flatted=require('flatted')
+
+import PolyfillCrypto from 'react-native-webview-crypto'
+global.Buffer = require('buffer').Buffer;
 
 const Main = ({navigation}) => {
+
+  const dispatch=useDispatch()
+  const {user}=useSelector(state=>state.userReducer)
+  const {hotels}=useSelector(state=>state.hotelsReducer)
+  const {actors}=useSelector(state=>state.actorReducer)
   //States for managing modals
   const [safetyModal, setSafetyModal] = useState(false);
   const [cancelModal, setCancelModal] = useState(false);
@@ -48,12 +48,57 @@ const Main = ({navigation}) => {
   const [hotelDetailPage, openHotelDetailPage] = useState(false);
   const [userDetails, setUserDetails] = useState(false);
 
-  //Hiding splashscreen and opening sign up page
+  const getUserAgent=async()=>{
+    await AsyncStorage.getItem('user').then(async(res)=>{
+      console.log('getting id : ',res)
+      try{
+      if(res==null){
+        btmSheetLoginRef.current.present()
+        AsyncStorage.clear()
+      }else{
+        const agent = new HttpAgent({identity: res,fetchOptions: {
+          reactNative: {
+            __nativeResponseType: 'base64',
+          },
+        },
+        callOptions: {
+          reactNative: {
+            textStreaming: true,
+          },
+        },
+        blsVerify: () => true,
+        host: 'http://127.0.0.1:4943',});
+        
+        actor = createActor('bkyz2-fmaaa-aaaaa-qaaaq-cai', {
+          agent,
+        });
+        let actor = createActor('bkyz2-fmaaa-aaaaa-qaaaq-cai', {
+          agent,
+        });
+        let actorUser=createActor('br5f7-7uaaa-aaaaa-qaaca-cai',{agent})
+        let actorHotel=createActor('bw4dl-smaaa-aaaaa-qaacq-cai',{agent})
+        // dispatch(setActor({
+        //   backendActor:actor,
+        //   userActor:actorUser,
+        //   hotelActor:actorHotel
+        // }))
+    
+        let whoami = await actor.whoami();
+        console.log("whoami",whoami);
+        dispatch(setPrinciple(whoami))
+        alert(whoami);
+        getUserData()
+      }
+    }catch(err){console.log(err)}
+    }).catch((err)=>{console.log(err)})
+  }
+
   useEffect(() => {
     SplashScreen.hide();
-    // btmSheetFinishRef.current.present()
-    btmSheetLoginRef.current.present();
-  }, []);
+    // getUserAgent()
+    btmSheetLoginRef.current.present()
+    generateIdentity();
+  },[])
 
   //Refs for managing bottomsheets
   const btmSheetLoginRef = useRef(null);
@@ -67,23 +112,37 @@ const Main = ({navigation}) => {
     btmSheetLoginRef.current.present();
   };
 
-  useEffect(() => {
-    generateIdentity();
-  }, []);
-
+  
   const [middleKeyIdentity, setMiddleKeyIdentity] = useState('');
   const generateIdentity = async () => {
-    middleKeyIdentity = await ECDSAKeyIdentity.generate({extractable: true});
-    setMiddleKeyIdentity(middleKeyIdentity);
+    await ECDSAKeyIdentity.generate({extractable: true})
+    .then(async(res)=>{
+      setMiddleKeyIdentity(res)
+    }
+      )
+    .catch((err)=>console.log(err))
   };
+  const getUserData=async()=>{
+    
+    // console.log(actors)
+    await actors.userActor?.getUserInfo().then((res)=>{
+      if(res[0].firstName!=''){
+        dispatch(setUser(res[0]))
+        btmSheetLoginRef.current.dismiss()
+        alert(`welcome back ${res[0].firstName}!`)
+        
+      }else{
+        alert('Now please follow the registeration process!')
+        btmSheetLoginRef.current.dismiss()
+        btmSheetFinishRef.current.present()
+      }
+    }).catch((err)=>console.error(err))
+    // await AsyncStorage.clear()
+  }
 
   const handleLogin = async () => {
-    // btmSheetLoginRef.current.dismiss();
-    // btmSheetFinishRef.current.present();
     try {
-      const url = `http://127.0.0.1:4943/?canisterId=be2us-64aaa-aaaaa-qaabq-cai?publicKey=${middleKeyIdentity
-        .getPublicKey()
-        .toDer()}`;
+      const url = `http://127.0.0.1:4943/?canisterId=be2us-64aaa-aaaaa-qaabq-cai&publicKey=${toHex(middleKeyIdentity.getPublicKey().toDer())}`;
       if (await InAppBrowser.isAvailable()) {
         const result = await InAppBrowser.open(url, {
           // iOS Properties
@@ -121,41 +180,52 @@ const Main = ({navigation}) => {
     } catch (error) {}
   };
   const handleDeepLink = async event => {
-    let actor = backend;
+    let actor=backend
     const deepLink = event.url;
     const urlObject = new URL(deepLink);
     const delegation = urlObject.searchParams.get('delegation');
-    console.log(delegation);
-    // Handle the deep link as needed
-    // For example, parse the deep link and navigate to the appropriate screen
-    // let encoded=decodeURIComponent(deepLink)
-    // console.log('Deep link received:', JSON.stringify(encoded));
-    // console.log('Deep link received:', deepLink.json);
-    console.log('before middleKeyIdentity');
-    // var middleKeyIdentity = await ECDSAKeyIdentity.generate().catch((err)=>console.log(err))
-    // console.log( "middleIdentity",middleKeyIdentity)
 
     const chain = DelegationChain.fromJSON(
       JSON.parse(decodeURIComponent(delegation)),
     );
-    console.log('chain', chain);
     const middleIdentity = DelegationIdentity.fromDelegation(
       middleKeyIdentity,
       chain,
     );
-    console.log('middleIdentity', middleIdentity.getPrincipal().toString());
-    const agent = new HttpAgent({identity: middleIdentity});
-    // alert("agent 1",agent)
-    actor = createActor('be2us-64aaa-aaaaa-qaabq-cai', {
+    const agent = new HttpAgent({identity: middleIdentity,fetchOptions: {
+      reactNative: {
+        __nativeResponseType: 'base64',
+      },
+    },
+    callOptions: {
+      reactNative: {
+        textStreaming: true,
+      },
+    },
+    blsVerify: () => true,
+    host: 'http://127.0.0.1:4943',});
+    actor = createActor('bkyz2-fmaaa-aaaaa-qaaaq-cai', {
       agent,
     });
+    let actorUser=createActor('br5f7-7uaaa-aaaaa-qaaca-cai',{agent})
+    let actorHotel=createActor('bw4dl-smaaa-aaaaa-qaacq-cai',{agent})
+    // dispatch(setActor({
+    //   backendActor:actor,
+    //   userActor:actorUser,
+    //   hotelActor:actorHotel
+    // }))
 
     let whoami = await actor.whoami();
-    console.log(whoami);
-    alert(whoami);
+    console.log("whoami",whoami);
+    dispatch(setPrinciple(whoami))
+    await AsyncStorage.setItem('user',JSON.stringify(middleIdentity))
+      .then((res)=>console.log('data stored successfully',middleIdentity))
+      .catch((err)=>console.log(err))
+      alert(whoami);
+      getUserData()
   };
 
-  //methods for opening and closing bottomdsheets
+  //methods for opening and closing bottomsheets
   const closeModal = valRef => {
     valRef.current.dismiss();
   };
@@ -177,6 +247,7 @@ const Main = ({navigation}) => {
     <GestureHandlerRootView style={{flex: 1, paddingTop: 200}}>
       <BottomSheetModalProvider>
         {/* Modals Defined */}
+        <PolyfillCrypto/>
 
         <Modal visible={safetyModal} animationType="fade">
           <ModalSafety setSafetyModal={setSafetyModal} />
@@ -227,7 +298,6 @@ const Main = ({navigation}) => {
           setUpdatePage={setUpdatePage}
           openHotelDetailPage={openHotelDetailPage}
         />
-        {/* <MapScreen/> */}
 
         {/* BottomSheets */}
         <BottomSheetModal

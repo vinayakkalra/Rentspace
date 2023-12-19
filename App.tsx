@@ -24,7 +24,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
-import BottomNav from './src/components/BottomNav';
+import BottomNav from './src/components/Navigation/BottomNav';
 
 type SectionProps = PropsWithChildren<{
   title: string;
