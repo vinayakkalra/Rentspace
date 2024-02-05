@@ -12,8 +12,20 @@
       "main": "Backend/RentSpace_backend/UserCanister.mo",
       "type": "motoko"
     },
+    "Review": {
+      "main": "Backend/RentSpace_backend/Review/ReviewCanister.mo",
+      "type": "motoko"
+    },
+    "ReviewMain": {
+      "main": "Backend/RentSpace_backend/Review/main.mo",
+      "type": "motoko"
+    },
     "hotel": {
       "main": "Backend/RentSpace_backend/HotelCanister.mo",
+      "type": "motoko"
+    },
+    "booking": {
+      "main": "Backend/RentSpace_backend/BookingCanister.mo",
       "type": "motoko"
     },
     "LoginWeb": {

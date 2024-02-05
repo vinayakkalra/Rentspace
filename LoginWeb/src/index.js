@@ -11,6 +11,11 @@ import {
 let actor = backend;
 var url = new URL(window.location.href);
 let authClient
+// One day in nanoseconds  
+const days = BigInt(1);  
+const hours = BigInt(24);  
+const nanoseconds = BigInt(3600000000000);
+const numDays=BigInt(5)// number of days delegation is valid for
 // Get the search parameters from the URL
 var params = new URLSearchParams(url.search);
 
@@ -31,6 +36,8 @@ loginButton.onclick = async e => {
       identityProvider: process.env.DFX_NETWORK === "ic"
                   ? "https://identity.ic0.app"
                   : `http://localhost:4943/?canisterId=rdmx6-jaaaa-aaaaa-aaadq-cai`,
+
+      maxTimeToLive: days * hours * nanoseconds * numDays, 
       onSuccess: resolve,
     });
   });

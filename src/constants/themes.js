@@ -14,7 +14,10 @@ const COLORS={
     hostTitle:'#4B1FD5',
     lighterGrey:'#F0EDEA',
     mediumGrey:'#7B7B7B',
-    bgLightGrey:'#F1F1F1'
+    bgLightGrey:'#F1F1F1',
+    lightGreen:"#4CC900",
+    pink:"#D377A6",
+    gold:'#FFD683'
 }
 const SIZES={
     xSmall: 10,
@@ -24,6 +27,8 @@ const SIZES={
   largeMed:18,
   large: 20,
   xLarge: 24,
+  medxLarge:26,
+  prexxLarge:28,
   xxLarge: 32,
 }
 const FONTS={

@@ -7,17 +7,17 @@ import ComparisonFeatures from './ComparisonFeatures/ComparisonFeatures'
 import Questions from './Q&A/Questions'
 import { COLORS } from '../../../constants/themes'
 
-const HostFirstScreen = ({setHostModal}) => {
+const HostFirstScreen = ({setHostModal,navigation}) => {
   return (
         <ScrollView contentContainerStyle={styles.view}>
-            <BackBtn setHostModal={setHostModal}/>
+            <BackBtn setHostModal={setHostModal} navigation={navigation}/>
             <Header/>
             <SearchMap/>
             <ComparisonFeatures/>
             <Questions/>
             <View style={styles.footer}>
                 <View style={styles.footerEnv}>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={()=>{setHostModal(2)}}>
                         <Text style={styles.text}>Ready to Rentspace it?</Text>
                     </TouchableOpacity>
                 </View>

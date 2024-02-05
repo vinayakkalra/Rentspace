@@ -1,20 +1,26 @@
-import CanisterMap "mo:candb/CanisterMap";
-import Utils "mo:candb/Utils";
-import Buffer "mo:stablebuffer/StableBuffer";
+import List "mo:base/List";
 import Debug "mo:base/Debug";
 import Error "mo:base/Error";
-import Admin "mo:candb/CanDBAdmin";
 import Principal "mo:base/Principal";
 import Cycles "mo:base/ExperimentalCycles";
 import Array "mo:base/Array";
 import Iter "mo:base/Iter";
-import Entity "mo:candb/Entity";
+
+import UUID "mo:uuid/UUID";
+import Source "mo:uuid/async/SourceV4";
+import Buffer "mo:stablebuffer/StableBuffer";
+
 import CA "mo:candb/CanisterActions";
-import List "mo:base/List";
+import CanisterMap "mo:candb/CanisterMap";
+import Utils "mo:candb/Utils";
+import Entity "mo:candb/Entity";
+import Admin "mo:candb/CanDBAdmin";
+import CanDB "mo:candb/CanDB";
+
 import User "UserCanister";
 import Hotel "HotelCanister";
-import Source "mo:uuid/async/SourceV4";
-import UUID "mo:uuid/UUID";
+import Booking "BookingCanister";
+import Types "types";
 
 shared ({caller = owner}) actor class Database() = this {
 
@@ -43,10 +49,6 @@ shared ({caller = owner}) actor class Database() = this {
     return Iter.toArray(iterOfPks);
   };
 
-  // @required function (Do not delete or change)
-  ///
-  /// Helper method acting as an interface for returning an empty array if no canisters
-  /// exist for the given PK
   func getCanistersIdsIfExists(pk : Text) : [Text] {
     switch (CanisterMap.get(pkToCanisterMap, pk)) {
       case null {[]};
@@ -54,48 +56,31 @@ shared ({caller = owner}) actor class Database() = this {
     };
   };
 
-  public shared ({caller = caller}) func autoScaleUserCanister(pk : Text) : async Text {
-    // Auto-Scaling Authorization - if the request to auto-scale the partition is not coming from an existing canister in the partition, reject it
-    if (Utils.callingCanisterOwnsPK(owner, pkToCanisterMap, pk)) {
-      Debug.print("creating an additional canister for pk=" # pk);
-      await createActorCanister(pk, ?[owner, Principal.fromActor(this)]);
-    } else {
-      throw Error.reject("not authorized");
-    };
-  };
-
-  public shared ({caller = creator}) func createNewUserCanister(canisterName : Text) : async ?Text {
-    assert (creator == owner);
-    Debug.print(debug_show (creator));
-    let pk = canisterName;
-    let canisterIds = getCanistersIdsIfExists(pk);
-    if (canisterIds == []) {
-      ?(await createUserCanister(pk, ?[owner, Principal.fromActor(this)]));
-    } else {
-      Debug.print(pk # "already exists");
-      null;
-    };
-  };
-  // dfx canister --network ic call <canister_name> <function_name> <function_input>
-
-  // Spins up a new HelloService canister with the provided pk and controllers
-  func createUserCanister(pk : Text, controllers : ?[Principal]) : async Text {
+  func createCanister(pk : Text, controllers : ?[Principal], canister : Types.Canister) : async Text {
     Debug.print("creating new hello service canister with pk=" # pk);
-    // Pre-load 300 billion cycles for the creation of a new Hello Service canister
-    // Note that canister creation costs 100 billion cycles, meaning there are 200 billion
-    // left over for the new canister when it is created
+
     Cycles.add(300_000_000_000);
-    let newCanister = await User.Users({
-      partitonKey = pk;
-      scalingOptions = {
-        autoScalingHook = autoScaleUserCanister;
-        sizeLimit = #heapSize(475_000_000); // Scale out at 475MB
-        // for auto-scaling testing
-        //sizeLimit = #count(3); // Scale out at 3 entities inserted
+    let newCanisterPrincipal : Principal = switch (canister) {
+      case (#booking) {
+        Principal.fromActor(await Booking.Booking({partitonKey = pk; scalingOptions = {autoScalingHook = autoScaleBookingCanister; sizeLimit = #heapSize(475_000_000)};
+
+        owners = controllers}));
       };
-      owners = controllers;
-    });
-    let newCanisterPrincipal = Principal.fromActor(newCanister);
+
+      case (#hotel) {
+        Principal.fromActor(await Hotel.Hotel({partitonKey = pk; scalingOptions = {autoScalingHook = autoScaleHotelCanister; sizeLimit = #heapSize(475_000_000)};
+
+        owners = controllers}));
+      };
+      case (#user) {
+        Principal.fromActor(await User.User({partitonKey = pk; scalingOptions = {autoScalingHook = autoScaleUserCanister; sizeLimit = #heapSize(475_000_000)};
+
+        /* Scale out at 475MB */
+        /* for auto-scaling testing */
+        /* sizeLimit = #count(3); // Scale out at 3 entities inserted */
+        owners = controllers}));
+      };
+    };
     await CA.updateCanisterSettings({
       canisterId = newCanisterPrincipal;
       settings = {
@@ -114,9 +99,56 @@ shared ({caller = owner}) actor class Database() = this {
     newCanisterId;
   };
 
+  public shared ({caller = creator}) func createNewCanister(canisterName : Text, canister : Types.Canister) : async ?Text {
+    // assert (creator == owner);
+    Debug.print(debug_show (creator));
+    let pk = canisterName;
+    let canisterIds = getCanistersIdsIfExists(pk);
+    if (canisterIds == []) {
+      ?(await createCanister(pk, ?[owner, Principal.fromActor(this)], canister));
+    } else {
+      Debug.print(pk # "already exists");
+      null;
+    };
+  };
+
+  public shared ({caller = caller}) func autoScaleUserCanister(pk : Text) : async Text {
+    // Auto-Scaling Authorization - if the request to auto-scale the partition is not coming from an existing canister in the partition, reject it
+    if (Utils.callingCanisterOwnsPK(caller, pkToCanisterMap, pk)) {
+      Debug.print("creating an additional canister for pk=" # pk);
+      await createCanister(pk, ?[owner, Principal.fromActor(this)], #user);
+    } else {
+      throw Error.reject("not authorized");
+    };
+  };
+
+  public shared ({caller = caller}) func autoScaleHotelCanister(pk : Text) : async Text {
+    assert (caller == owner);
+
+    // Auto-Scaling Authorization - if the request to auto-scale the partition is not coming from an existing canister in the partition, reject it
+    if (Utils.callingCanisterOwnsPK(caller, pkToCanisterMap, pk)) {
+      Debug.print("creating an additional canister for pk=" # pk);
+      await createCanister(pk, ?[owner, Principal.fromActor(this)], #hotel);
+    } else {
+      throw Error.reject("not authorized");
+    };
+  };
+
+  // Spins up a new HelloService canister with the provided pk and controllers
+
+  public shared ({caller = caller}) func autoScaleBookingCanister(pk : Text) : async Text {
+    // Auto-Scaling Authorization - if the request to auto-scale the partition is not coming from an existing canister in the partition, reject it
+    if (Utils.callingCanisterOwnsPK(owner, pkToCanisterMap, pk)) {
+      Debug.print("creating an additional canister for pk=" # pk);
+      await createCanister(pk, ?[owner, Principal.fromActor(this)], #booking);
+    } else {
+      throw Error.reject("not authorized");
+    };
+  };
+
   public shared ({caller}) func deleteCanister(serviceId : Text) : async () {
     //Warning! change this condition othwer
-    assert (caller == owner);
+    // assert (caller == owner);
     // admin can delete any pk by passing in service id of user principal
     let pk = serviceId;
 
@@ -142,74 +174,14 @@ shared ({caller = owner}) actor class Database() = this {
 
     return "Canisters in PK " # pk # " upgraded";
   };
-
-  //
-
-  public shared ({caller = caller}) func autoScaleHotelCanister(pk : Text) : async Text {
-    assert (caller == owner);
-
-    // Auto-Scaling Authorization - if the request to auto-scale the partition is not coming from an existing canister in the partition, reject it
-    if (Utils.callingCanisterOwnsPK(caller, pkToCanisterMap, pk)) {
-      Debug.print("creating an additional canister for pk=" # pk);
-      await createActorCanister(pk, ?[owner, Principal.fromActor(this)]);
-    } else {
-      throw Error.reject("not authorized");
-    };
-  };
-
-  public shared ({caller = creator}) func createNewHotelCanister(canisterName : Text) : async ?Text {
-    assert (creator == owner);
-    let pk = canisterName;
-    let canisterIds = getCanistersIdsIfExists(pk);
-    if (canisterIds == []) {
-      ?(await createActorCanister(pk, ?[owner, Principal.fromActor(this)]));
-    } else {
-      Debug.print(pk # "already exists");
-      null;
-    };
-  };
-
-  // Spins up a new HelloService canister with the provided pk and controllers
-  func createActorCanister(pk : Text, controllers : ?[Principal]) : async Text {
-    Debug.print("creating new hello service canister with pk=" # pk);
-    // Pre-load 300 billion cycles for the creation of a new Hello Service canister
-    // Note that canister creation costs 100 billion cycles, meaning there are 200 billion
-    // left over for the new canister when it is created
-    Cycles.add(300_000_000_000);
-    let newCanister = await Hotel.Hotel({
-      partitonKey = pk;
-      scalingOptions = {
-        autoScalingHook = autoScaleHotelCanister;
-        sizeLimit = #heapSize(475_000_000); // Scale out at 475MB
-        // for auto-scaling testing
-        //sizeLimit = #count(3); // Scale out at 3 entities inserted
-      };
-      owners = controllers;
-    });
-    let newCanisterPrincipal = Principal.fromActor(newCanister);
-    await CA.updateCanisterSettings({
-      canisterId = newCanisterPrincipal;
-      settings = {
-        controllers = controllers;
-        compute_allocation = ?0;
-        memory_allocation = ?0;
-        freezing_threshold = ?2592000;
-      };
-    });
-
-    let newCanisterId = Principal.toText(newCanisterPrincipal);
-    // After creating the new Hello Service canister, add it to the pkToCanisterMap
-    pkToCanisterMap := CanisterMap.add(pkToCanisterMap, pk, newCanisterId);
-
-    Debug.print("new User canisterId=" # newCanisterId);
-    newCanisterId;
-  };
-
   public shared query ({caller}) func whoami() : async Text {
     return Principal.toText(caller);
   };
-  public query func getOwner():async Text{
-    return Principal.toText(owner);
-  }
 
+  public query func getOwner() : async Text {
+    return Principal.toText(owner);
+  };
+  public query func getBalance() : async Nat {
+    Cycles.balance();
+  };
 };

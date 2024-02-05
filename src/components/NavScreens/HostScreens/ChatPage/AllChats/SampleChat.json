@@ -1,0 +1,123 @@
+[
+    {
+        "name": "Vikas",
+        "messages": [
+            {
+                "self": true,
+                "message": "Hi, how are you?"
+            },
+            {
+                "self": false,
+                "message": "I'm good, thanks! How about you?"
+            },
+            {
+                "self": true,
+                "message": "I'm doing well. Any exciting plans for the weekend?"
+            },
+            {
+                "self": false,
+                "message": "Not really, just relaxing at home. What about you?"
+            },
+            {
+                "self": true,
+                "message": "Same here. Maybe we can catch up sometime."
+            },
+            {
+                "self": false,
+                "message": "Sure, that sounds like a plan. Let me know when you're free."
+            },
+            {
+                "self": true,
+                "message": "Will do. Take care!"
+            },
+            {
+                "self": false,
+                "message": "You too! Bye."
+            }
+        ]
+    },
+    {
+        "name": "Vijay",
+        "messages": [
+            {
+                "self": true,
+                "message": "Hey there! How's your day going?"
+            },
+            {
+                "self": false,
+                "message": "Hi! It's been busy but productive. How about yours?"
+            },
+            {
+                "self": true,
+                "message": "Not bad. Anything exciting happening on your end?"
+            },
+            {
+                "self": false,
+                "message": "Just the usual. Work, work, work. But I can't complain!"
+            }
+        ]
+    },
+    {
+        "name": "Anas",
+        "messages": [
+            {
+                "self": true,
+                "message": "Hello! What's up?"
+            },
+            {
+                "self": false,
+                "message": "Hi! Not much, just chilling. How about you?"
+            },
+            {
+                "self": true,
+                "message": "Just working on some stuff. Anything new on your end?"
+            },
+            {
+                "self": false,
+                "message": "Not really. Same old routine. Anything interesting happening with you?"
+            }
+        ]
+    },
+    {
+        "name": "Somya",
+        "messages": [
+            {
+                "self": true,
+                "message": "Hi! How's your day going?"
+            },
+            {
+                "self": false,
+                "message": "Hey! It's been good. How about yours?"
+            },
+            {
+                "self": true,
+                "message": "Pretty good. Anything exciting on your agenda today?"
+            },
+            {
+                "self": false,
+                "message": "Not really, just the usual. Maybe catch a movie later. You?"
+            }
+        ]
+    },
+    {
+        "name": "Mohit",
+        "messages": [
+            {
+                "self": true,
+                "message": "Hey! Long time no see. What have you been up to?"
+            },
+            {
+                "self": false,
+                "message": "Hi! I've been busy with work. How about you?"
+            },
+            {
+                "self": true,
+                "message": "Same here. We should plan something to catch up!"
+            },
+            {
+                "self": false,
+                "message": "Absolutely! Let's find a day that works for both of us."
+            }
+        ]
+    }
+]

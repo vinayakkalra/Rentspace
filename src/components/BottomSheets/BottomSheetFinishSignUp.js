@@ -27,24 +27,33 @@ const BottomSheetFinishSignUp = ({openComm,closeModal}) => {
   
 
   async function signUp(){
+    console.log(actors?.userActor.createUser)
     setLoading(true)
-    const id=Math.round(Math.random()*1000).toString()
-    await actors.userActor?.createUser(fname,lname,DOB,email,"user").then(async(res)=>{
-      //setUser(res[0])
+    const userObj={
+      firstName:fname,
+      lastName:lname,
+      dob:DOB,
+      userEmail:email,
+    }
+    // await actors.userActor?.createUser(fname,lname,DOB,email,"user").then(async(res)=>{
+    let whoami=await actors?.backendActor?.whoami().catch((err)=>{console.log(err)})
+    console.log("principal signup page : ",whoami)
+    await actors.userActor?.createUser(userObj).then(async(res)=>{
       console.log(res)
       setLoading(false)
       alert(`Welcome ${fname}! You are successfully registered `)
-      
-      //alert('Welcome'+res[0]?.firstName)
       await actors.userActor?.getUserInfo().then((res)=>{
         console.log(res[0]),
-        // setUser(res[0])
         dispatch(setUser(res[0]))
         openComm()
         closeModal()
         console.log(user)
-      })
-    }).catch((err)=>{console.log(err)})
+      }).catch((err)=>{console.log("get user info catch : ",err)})
+    }).catch((err)=>{
+      // alert(err)
+      console.log("err create user : ",err)
+      setLoading(false)
+    })
     //alert(email)
   }
  
@@ -128,7 +137,7 @@ const BottomSheetFinishSignUp = ({openComm,closeModal}) => {
           <Calendar
             onDayPress={day => {
               setSelected(day.dateString);
-              setDOB(`${day.day}/${day.month}/${day.year}`);
+              setDOB(`${day.day}/${(day.month<10)?"0"+day.month:day.month}/${day.year}`);
               setShowCalendar(false);
             }}
             style={styles.calendar}

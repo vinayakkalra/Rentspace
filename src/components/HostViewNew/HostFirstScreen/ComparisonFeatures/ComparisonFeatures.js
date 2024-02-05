@@ -86,7 +86,7 @@ const ComparisonFeatures = () => {
         <Text style={styles.heading}>Rentspace</Text>
         <Text style={[styles.heading,{marginLeft:'5%'}]}>Competitors</Text>
       </View>
-      <View style={styles.hrLine}></View>
+      <View style={styles.hrLine}/>
       {
         comparisons.map((item,index)=>{
           if(item.type=='detailed'){
@@ -99,7 +99,7 @@ const ComparisonFeatures = () => {
                   rent={item.rent}
                   comp={item.comp}
                 />
-                <View style={styles.hrLine}/>
+               <View style={styles.hrLine}/>
               </>
             )
           }else{
@@ -169,11 +169,6 @@ const styles = StyleSheet.create({
     width:'85%',
     marginLeft:'7.5%'
   },
-  heading:{
-    color:COLORS.textLightGrey,
-    opacity:0.7,
-    fontSize:SIZES.preMedium
-  },
   hrLine:{
     height:2,
     borderBottomWidth:2,
@@ -181,6 +176,11 @@ const styles = StyleSheet.create({
     width:"100%",
     marginTop:10,
     marginBottom:15
+  },
+  heading:{
+    color:COLORS.textLightGrey,
+    opacity:0.7,
+    fontSize:SIZES.preMedium
   },
   btnCont:{
     display:'flex',

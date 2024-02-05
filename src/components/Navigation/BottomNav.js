@@ -7,7 +7,7 @@ import Icon2 from 'react-native-vector-icons/Fontisto'
 
 
 
-const BottomNav = ({filterNav,searchNav,heartNav,commentNav,userNav}) => {
+const BottomNav = ({navigation}) => {
 
 
   return (
@@ -15,20 +15,20 @@ const BottomNav = ({filterNav,searchNav,heartNav,commentNav,userNav}) => {
     
     <View style={styles.viewNav}>
         {/* <Icon name="home" size={20} color={COLORS.inputBorder}/> */}
-        <TouchableOpacity style={styles.iconNav} onPress={()=>{filterNav()}}>
+        <TouchableOpacity style={styles.iconNav} onPress={()=>{navigation.navigate('Launch')}}>
         <Icon name="filter" size={25} color={COLORS.inputBorder}/>
         </TouchableOpacity >
-        <TouchableOpacity style={styles.iconNav} onPress={()=>{searchNav()}}>
+        <TouchableOpacity style={styles.iconNav} onPress={()=>{navigation.navigate('mapSearch')}}>
             {/* <Image source={images.search}/> */}
             <Icon name="search1" size={25} color={COLORS.inputBorder}/>
         </TouchableOpacity >
-        <TouchableOpacity style={styles.iconNav} onPress={()=>{heartNav(true)}}>
+        <TouchableOpacity style={styles.iconNav} onPress={()=>{navigation.navigate('reels')}}>
         <Icon name="hearto" size={25} color={COLORS.inputBorder}/>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconNav} onPress={()=>{commentNav()}}>
+        <TouchableOpacity style={styles.iconNav} onPress={()=>{navigation.navigate('UserChat')}}>
         <Icon2 name="comment" size={20} color={COLORS.inputBorder}/>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconNav} onPress={()=>{userNav()}}>
+        <TouchableOpacity style={styles.iconNav} onPress={()=>{navigation.navigate('profile')}}>
         <Icon name="user" size={25} color={COLORS.inputBorder}/>
         </TouchableOpacity>
     </View>

@@ -1,0 +1,51 @@
+[
+    {
+      "rating": 4,
+      "review": "The product exceeded my expectations! It's a versatile and user-friendly tool that has greatly improved my workflow. The sleek design and advanced features make it a must-have for professionals. Kudos to the developers!",
+      "userID": "user123",
+      "date": "15/02/2023"
+    },
+    {
+      "rating": 3,
+      "review": "I found the product to be satisfactory. While it meets basic requirements, there is room for improvement in terms of additional features. The interface is intuitive, and I appreciate the prompt customer support. Overall, a decent experience.",
+      "userID": "customer456",
+      "date": "21/03/2023"
+    },
+    {
+      "rating": 5,
+      "review": "Exceptional product! The attention to detail is impressive, and the functionality is top-notch. It has significantly boosted my productivity. I highly recommend it to anyone seeking a reliable solution for their needs.",
+      "userID": "prodlover",
+      "date": "05/04/2023"
+    },
+    {
+      "rating": 2,
+      "review": "Disappointing experience. The product lacks key features and seems outdated. The customer support was unhelpful, and I regret my purchase. I would advise others to explore alternatives.",
+      "userID": "unsatisfieduser",
+      "date": "12/05/2023"
+    },
+    {
+      "rating": 4,
+      "review": "Great value for money! The product offers a wide range of features at an affordable price. The user interface is intuitive, and I appreciate the regular updates. It has become an essential tool in my daily routine.",
+      "userID": "valuehunter",
+      "date": "28/06/2023"
+    },
+    {
+      "rating": 5,
+      "review": "Outstanding product! The quality surpasses expectations, and the customer service is excellent. I've recommended it to colleagues, and they've had similarly positive experiences. Well done!",
+      "userID": "happycustomer",
+      "date": "09/08/2023"
+    },
+    {
+      "rating": 3,
+      "review": "Average product. It gets the job done, but there's nothing remarkable about it. I encountered some glitches, and the user interface could be more intuitive. Decent, but not exceptional.",
+      "userID": "neutraluser",
+      "date": "14/09/2023"
+    },
+    {
+      "rating": 4,
+      "review": "Solid performance. The product delivers as promised, and I appreciate the reliability. It has become an essential part of my daily routine. Minor improvements could enhance the overall experience.",
+      "userID": "techenthusiast",
+      "date": "20/11/2023"
+    }
+  ]
+  

@@ -15,6 +15,22 @@ import profileSample from '../assets/images/profileSample.jpg'
 import profile2 from '../assets/images/profile2.png'
 import sampleMapIcon from '../assets/images/sampleMapIcon.jpg'
 import map1 from '../assets/images/map1.png'
+import hostBed from '../assets/images/hostView/bed.png'
+import hostDoor from '../assets/images/hostView/door.png'
+import hostHouseDesign from '../assets/images/hostView/houseDesign.png'
+import hostMirror from '../assets/images/hostView/mirror.png'
+import hostHome from '../assets/images/hostView/home.png'
+import map2 from '../assets/images/hostView/map2.png'
+import hotelImg1 from '../assets/images/hostView/hotelImg1.png'
+import hotelImg2 from '../assets/images/hostView/hotelImg2.png'
+import hotelImg3 from '../assets/images/hostView/hotelImg3.png'
+import hotelImg4 from '../assets/images/hostView/hotelImg4.png'
+import hotelImg5 from '../assets/images/hostView/hotelImg5.png'
+import congrats from '../assets/images/hostView/VectorpartyPopper.png'
+import IDAbout from '../assets/images/hostView/IDAbout.png'
+import reelBG from '../assets/images/ReelBg.png'
+import sampleReel from '../assets/video/sampleReel.mp4'
+// import saple
 
 export default {
     favourite,
@@ -33,5 +49,20 @@ export default {
     profileSample,
     profile2,
     sampleMapIcon,
-    map1
+    map1,
+    hostBed,
+    hostDoor,
+    hostHouseDesign,
+    hostMirror,
+    hostHome,
+    map2,
+    hotelImg1,
+    hotelImg2,
+    hotelImg3,
+    hotelImg4,
+    hotelImg5,
+    congrats,
+    IDAbout,
+    reelBG,
+    sampleReel
 }

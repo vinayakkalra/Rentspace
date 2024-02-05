@@ -1,10 +1,30 @@
-import { StyleSheet, Text, View ,Image} from 'react-native'
-import React from 'react'
+import { StyleSheet, Text, View ,Image, ActivityIndicator} from 'react-native'
+import React,{useState} from 'react'
 import { SIZES,COLORS } from '../../constants/themes'
 import {  images } from '../../constants'
 import { TouchableOpacity } from 'react-native-gesture-handler'
+import { useSelector } from 'react-redux'
 
 const BottomSheetCommunity = ({selfMod,openNotiModal}) => {
+
+    const {user}=useSelector(state=>state.userReducer)
+    const {actors}=useSelector(state=>state.actorReducer)
+    const [loading,setLoading]=useState(false)
+    const agreeOnAgreement=async()=>{
+        console.log({...user,agreementStatus:true,userGovId:'123',userProfile:"img1"})
+        setLoading(true)
+        await actors?.userActor.updateUserInfo({...user,agreementStatus:true,userGovId:'123',userProfile:"img1"}).then((res)=>{
+            setLoading(false)
+            alert('Thanks for accepting our guidelines!')
+            selfMod.current.dismiss()
+            openNotiModal()
+        }).catch((err)=>{
+            console.log(err)
+            setLoading(false)
+        })
+        
+    }
+
   return (
     <View style={styles.bottomSheet}>
         <View style={styles.commImgCont}>
@@ -27,12 +47,7 @@ const BottomSheetCommunity = ({selfMod,openNotiModal}) => {
         Learn More.
       </Text>
       
-      <TouchableOpacity style={styles.agreeBtn} onPress={
-        ()=>{
-            selfMod.current.dismiss()
-            openNotiModal()
-        }
-      }>
+      <TouchableOpacity style={styles.agreeBtn} onPress={agreeOnAgreement}>
                 <Text style={styles.agreeText}>Accept and continue</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.declineBtn} onPress={()=>{
@@ -40,6 +55,7 @@ const BottomSheetCommunity = ({selfMod,openNotiModal}) => {
         }}>
                 <Text style={styles.declineText}>Decline</Text>
         </TouchableOpacity>
+        <ActivityIndicator animating={loading} style={styles.loader} size={40}/>
     </View>
   )
 }
@@ -128,5 +144,10 @@ const styles = StyleSheet.create({
         color:COLORS.inputBorder,
         fontWeight:'bold',
         fontSize:SIZES.medium
+    },
+    loader:{
+        position:'absolute',
+        top:'45%',
+        left:'45%'
     }
 })

@@ -47,7 +47,7 @@ This Documentation is for referance to anyone trying to integrate internet ident
          return require('deprecated-react-native-prop-types').ViewPropTypes;<br>
       },<br>
    </pre>
-2. Follow [this doc](https://docs.google.com/document/d/1RPWBaXOx8Sp4r59meclxuEb_sEg9U_fsndCpHqEY3qs/edit?usp=sharing)  to make necessary changes inside agent package to run the project.
+2. Follow [this doc](https://docs.google.com/document/d/14rPY-kNuBXau5fNxSXXpfaHrMNZSGqY9okc3Z8WDLu4/edit?usp=sharing)  to make necessary changes inside agent package to run the project.
 
 3. run `npm start -- --reset-cache` command to start the frontend and then choose `a` to run it on android. You can also simply run `npm start` but the first command is suggested because sometimes react-native gives unnecessary warnings and errors which are fixed by clearing the cache by that command on running.
 
